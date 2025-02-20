@@ -1,19 +1,23 @@
-import express from "express"; // to create server
-import cors from "cors";
-import dotenv from "dotenv";
+import express from "express";
+import authRouter from "./src/routes/authRoute.js"
+import cors from 'cors'
+import dotenv from 'dotenv'
+
 
 dotenv.config();
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8001;
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-	res.send("welcome to API");
-});
+app.use("/auth",authRouter)
 
-app.listen(port, () => {
-	console.log(`Server is running on port ${port}`);
-});
+app.get("/", (_req,res) =>{
+    res.send("Welcome to the API")
+})
+
+app.listen(port,() => {
+    console.log(`Server running on port ${port}`)
+})
