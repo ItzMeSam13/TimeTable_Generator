@@ -3,10 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const CreateTasks = async (req, res) => {
+    const { taskListId } = req.params;
     const { tasks } = req.body;
 
-    if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
-        return res.status(400).json({ error: "Tasks array is required" });
+    if (!taskListId || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
+        return res.status(400).json({ error: "Task list ID and tasks array are required" });
     }
 
     for (let task of tasks) {
@@ -17,7 +18,7 @@ export const CreateTasks = async (req, res) => {
 
     try {
         const existingTaskCount = await prisma.tasks.count({
-            where: { userId: req.user.userId }
+            where: { taskListId }
         });
 
         await prisma.tasks.createMany({
@@ -27,13 +28,13 @@ export const CreateTasks = async (req, res) => {
                 Deadline: new Date(task.Deadline),
                 Priority: task.Priority,
                 Duration: Number(task.Duration),
-                userId: req.user.userId
+                taskListId
             })),
             skipDuplicates: true
         });
 
         const insertedTasks = await prisma.tasks.findMany({
-            where: { userId: req.user.userId },
+            where: { taskListId },
             orderBy: { TaskNo: "asc" }
         });
 
@@ -45,9 +46,15 @@ export const CreateTasks = async (req, res) => {
 };
 
 export const GetUserTasks = async (req, res) => {
+    const { taskListId } = req.params;
+
+    if (!taskListId) {
+        return res.status(400).json({ error: "Task list ID is required" });
+    }
+
     try {
         const tasks = await prisma.tasks.findMany({
-            where: { userId: req.user.userId },
+            where: { taskListId },
             orderBy: { TaskNo: "asc" }
         });
 
@@ -67,7 +74,7 @@ export const UpdateTask = async (req, res) => {
             where: { TaskID: id }
         });
 
-        if (!existingTask || existingTask.userId !== req.user.userId) {
+        if (!existingTask) {
             return res.status(404).json({ error: "Task not found" });
         }
 
@@ -88,7 +95,6 @@ export const UpdateTask = async (req, res) => {
     }
 };
 
-
 export const DeleteTask = async (req, res) => {
     const { id } = req.params;
 
@@ -97,7 +103,7 @@ export const DeleteTask = async (req, res) => {
             where: { TaskID: id }
         });
 
-        if (!existingTask || existingTask.userId !== req.user.userId) {
+        if (!existingTask) {
             return res.status(404).json({ error: "Task not found" });
         }
 
@@ -106,7 +112,7 @@ export const DeleteTask = async (req, res) => {
         });
 
         const remainingTasks = await prisma.tasks.findMany({
-            where: { userId: req.user.userId },
+            where: { taskListId: existingTask.taskListId },
             orderBy: { TaskNo: "asc" }
         });
 
@@ -123,7 +129,3 @@ export const DeleteTask = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
-
-
-

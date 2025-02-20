@@ -1,9 +1,9 @@
 import express from "express";
 import authRouter from "./src/routes/authRoute.js"
 import tasksRouter from "./src/routes/TasksRoutes.js"
+import taskListRouter from "./src/routes/TasksListsRoutes.js";
 import cors from 'cors'
 import dotenv from 'dotenv'
-
 
 dotenv.config();
 
@@ -13,7 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/auth",authRouter)
+app.use("/auth", authRouter);
+app.use("/tasklists", taskListRouter);
 app.use("/tasks", tasksRouter);
 
 app.get("/", (_req,res) =>{

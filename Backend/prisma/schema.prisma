@@ -15,18 +15,28 @@ model Users {
   password  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  taskLists TaskList[]
+}
+
+model TaskList {
+  id        String   @id @default(cuid())
+  name      String   // Task list name (e.g., "Exam Prep")
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      Users    @relation(fields: [userId], references: [id])
   tasks     Tasks[]
 }
 
 model Tasks {
-  TaskID    String      @id @default(cuid())
+  TaskID    String   @id @default(cuid())
   TaskNo    Int    
-  userId    String
-  TaskName  String   @unique
+  taskListId String  // Now linked to a specific task list
+  TaskName  String
   Priority  String
   Duration  Int
   Deadline  DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  users     Users    @relation(fields: [userId], references: [id])
+  taskList  TaskList @relation(fields: [taskListId], references: [id])
 }
