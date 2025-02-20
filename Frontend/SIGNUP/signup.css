@@ -29,7 +29,17 @@ body {
     border-radius: 5px;
     padding: 10px;
 }
-
+.transparent-input{
+    width: 300px;
+    padding: 8px;
+    font-size: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: background-color 0.3s, border-color 0.3s;
+    outline: none;
+    columns: white;
+}
 .input-icon {
     color: white;
     margin-right: 10px;
