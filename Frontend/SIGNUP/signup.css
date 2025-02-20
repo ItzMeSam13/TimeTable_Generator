@@ -1,0 +1,85 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('https://images.pexels.com/photos/1486974/pexels-photo-1486974.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
+}
+
+/* Register box with Glassmorphism effect */
+.register-box {
+    background: rgba(255, 255, 255, 0.1); /* Transparent */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+}
+
+/* Input field styling */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.input-icon {
+    color: white;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.form-control {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 100%;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Error message styling */
+.error {
+    color: #ff4d4d;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+/* Button styling */
+.btn {
+    width: 100%;
+    background: #ff7b00;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #ff9c33;
+}
+
+/* Login link */
+.login-link {
+    margin-top: 15px;
+    color: white;
+    font-size: 14px;
+}
+
+.login-link a {
+    color: #ff7b00;
+    text-decoration: none;
+}

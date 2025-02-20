@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const router = Router();
 
 // Middleware to verify JWT
-const verifyToken = (req, res, next) => {
+export const verifyToken = (req, res, next) => {
     const token = req.header("Authorization");
     if (!token) return res.status(403).json({ error: "Access denied. No token provided." });
 

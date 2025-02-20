@@ -8,7 +8,7 @@ dotenv.config(); // ✅ Load environment variables
 
 const prisma = new PrismaClient();
 
-// ✅ **Signup (Register) Student**
+// ✅ *Signup (Register) Student*
 export async function create_user(req, res) {
     const { email, phone, name, password } = req.body; 
 
@@ -50,7 +50,7 @@ export async function create_user(req, res) {
     }
 }
 
-// ✅ **Login Student**
+// ✅ *Login Student*
 export async function login_user(req, res) {
     const { email, password } = req.body;
 

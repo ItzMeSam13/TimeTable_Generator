@@ -15,19 +15,18 @@ model Users {
   password  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Tasks     Tasks[]
+  tasks     Tasks[]
 }
 
 model Tasks {
-  TaskID    Int      @id @default(autoincrement())
+  TaskID    String      @id @default(cuid())
+  TaskNo    Int    
   userId    String
   TaskName  String   @unique
   Priority  String
   Duration  Int
   Deadline  DateTime
   createdAt DateTime @default(now())
-  updatedAt DateTime
-  Users     Users    @relation(fields: [userId], references: [id])
-
-  @@index([userId])
+  updatedAt DateTime @updatedAt
+  users     Users    @relation(fields: [userId], references: [id])
 }

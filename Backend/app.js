@@ -1,5 +1,6 @@
 import express from "express";
 import authRouter from "./src/routes/authRoute.js"
+import tasksRouter from "./src/routes/TasksRoutes.js"
 import cors from 'cors'
 import dotenv from 'dotenv'
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/auth",authRouter)
+app.use("/tasks", tasksRouter);
 
 app.get("/", (_req,res) =>{
     res.send("Welcome to the API")
