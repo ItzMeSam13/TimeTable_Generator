@@ -8,7 +8,7 @@ dotenv.config(); // ✅ Load environment variables
 
 const prisma = new PrismaClient();
 
-// ✅ **Signup (Register) Student**
+// ✅ *Signup (Register) Student*
 export async function create_user(req, res) {
     const { email, phone, name, password } = req.body; 
 
@@ -32,7 +32,7 @@ export async function create_user(req, res) {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await prisma.user.create({
+        const user = await prisma.users.create({
             data: { email, phone, name, password: hashedPassword },
         });
 
@@ -50,7 +50,7 @@ export async function create_user(req, res) {
     }
 }
 
-// ✅ **Login Student**
+// ✅ *Login Student*
 export async function login_user(req, res) {
     const { email, password } = req.body;
 
@@ -59,7 +59,7 @@ export async function login_user(req, res) {
     }
 
     try {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
             where: { email },
         });
 
