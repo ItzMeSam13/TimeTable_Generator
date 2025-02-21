@@ -65,35 +65,47 @@ export const GetUserTasks = async (req, res) => {
     }
 };
 
-export const UpdateTask = async (req, res) => {
-    const { id } = req.params;
-    const { TaskName, Deadline, Priority, Duration } = req.body;
+export const UpdateTasks = async (req, res) => {
+    const { updates } = req.body; // Expecting an array of task updates
+
+    if (!updates || !Array.isArray(updates) || updates.length === 0) {
+        return res.status(400).json({ error: "An array of task updates is required" });
+    }
 
     try {
-        const existingTask = await prisma.tasks.findUnique({
-            where: { TaskID: id }
-        });
+        const updatedTasks = [];
 
-        if (!existingTask) {
-            return res.status(404).json({ error: "Task not found" });
+        for (const task of updates) {
+            const { TaskID, TaskName, Deadline, Priority, Duration } = task;
+
+            const existingTask = await prisma.tasks.findUnique({
+                where: { TaskID }
+            });
+
+            if (!existingTask) {
+                return res.status(404).json({ error: `Task with ID ${TaskID} not found` });
+            }
+
+            const updatedTask = await prisma.tasks.update({
+                where: { TaskID },
+                data: {
+                    TaskName: TaskName !== undefined ? TaskName : existingTask.TaskName,
+                    Deadline: Deadline !== undefined ? new Date(Deadline) : existingTask.Deadline,
+                    Priority: Priority !== undefined ? Priority : existingTask.Priority,
+                    Duration: Duration !== undefined ? Number(Duration) : existingTask.Duration
+                }
+            });
+
+            updatedTasks.push(updatedTask);
         }
 
-        const updatedTask = await prisma.tasks.update({
-            where: { TaskID: id },
-            data: {
-                TaskName: TaskName !== undefined ? TaskName : existingTask.TaskName,
-                Deadline: Deadline !== undefined ? new Date(Deadline) : existingTask.Deadline,
-                Priority: Priority !== undefined ? Priority : existingTask.Priority,
-                Duration: Duration !== undefined ? Number(Duration) : existingTask.Duration
-            }
-        });
-
-        return res.status(200).json({ message: "Task updated successfully", task: updatedTask });
+        return res.status(200).json({ message: "Tasks updated successfully", tasks: updatedTasks });
     } catch (error) {
         console.error("Database Error:", error.message);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
 
 export const DeleteTask = async (req, res) => {
     const { id } = req.params;
