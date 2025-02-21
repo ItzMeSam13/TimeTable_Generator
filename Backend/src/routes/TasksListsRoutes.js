@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CreateTaskList, GetUserTaskLists, DeleteTaskList, SyncTaskListToGoogleCalendar } from "../controllers/TasksList.js";
+import { CreateTaskList, GetUserTaskLists, DeleteTaskList, SyncTimetableToGoogleCalendar } from "../controllers/TasksList.js";
 import { CreateTasks, GetUserTasks } from "../controllers/Tasks.js";
 import { verifyToken } from "./authRoute.js";
 
@@ -15,5 +15,5 @@ router.delete("/:taskListId", verifyToken, DeleteTaskList);
 router.post("/:taskListId/tasks", verifyToken, CreateTasks);
 router.get("/:taskListId/tasks", verifyToken, GetUserTasks); 
 
-router.post("/:taskListId/sync-to-calendar", verifyToken, SyncTaskListToGoogleCalendar);
+router.post("/:taskListId/sync-timetable", verifyToken, SyncTimetableToGoogleCalendar);
 export default router;

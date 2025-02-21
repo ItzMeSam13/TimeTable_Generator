@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/ItzMeSam13/TimeTable_Generator#readme",
   "dependencies": {
+    "@google/generative-ai": "^0.22.0",
     "@prisma/client": "^6.4.0",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

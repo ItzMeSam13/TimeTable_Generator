@@ -6,6 +6,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import fs from 'fs'
 import { google } from "googleapis";
+console.log("🔹 GEMINI API Key:", process.env.GEMINI_API_KEY ? "Loaded ✅" : "Not Found ❌");
 
 dotenv.config();
 
