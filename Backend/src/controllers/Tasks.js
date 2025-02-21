@@ -2,11 +2,29 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+import { generateOptimizedTimetable } from "../utils/geminiAI.js";
+
+
+
+
 export const CreateTasks = async (req, res) => {
+    const { taskListId } = req.params;
     const { tasks } = req.body;
 
-    if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
-        return res.status(400).json({ error: "Tasks array is required" });
+    if (!taskListId || !tasks || !Array.isArray(tasks) || tasks.length === 0) {
+        return res.status(400).json({ error: "Task list ID and tasks array are required" });
+    }
+
+    const taskListExists = await prisma.taskList.findUnique({
+        where: { id: taskListId }
+    });
+
+    if (!taskListExists) {
+        return res.status(404).json({ error: "Task list not found" });
+    }
+
+    if (!taskListExists) {
+        return res.status(404).json({ error: "Task list not found" });
     }
 
     for (let task of tasks) {
@@ -16,28 +34,45 @@ export const CreateTasks = async (req, res) => {
     }
 
     try {
-        const existingTaskCount = await prisma.tasks.count({
-            where: { userId: req.user.userId }
-        });
+        // 🔹 Get existing task count to auto-increment TaskNo
+        const existingTaskCount = await prisma.tasks.count({ where: { taskListId } });
 
+        // 🔹 Save tasks with auto-incremented TaskNo
         await prisma.tasks.createMany({
             data: tasks.map((task, index) => ({
-                TaskNo: existingTaskCount + index + 1, 
+                TaskNo: existingTaskCount + index + 1,
                 TaskName: task.TaskName,
                 Deadline: new Date(task.Deadline),
                 Priority: task.Priority,
                 Duration: Number(task.Duration),
-                userId: req.user.userId
+                taskListId
             })),
             skipDuplicates: true
         });
 
-        const insertedTasks = await prisma.tasks.findMany({
-            where: { userId: req.user.userId },
-            orderBy: { TaskNo: "asc" }
+        // 🔹 Fetch all tasks from the list
+        const allTasks = await prisma.tasks.findMany({ where: { taskListId } });
+
+        // 🔹 Generate AI-Optimized Schedule
+        const aiSchedule = await generateOptimizedTimetable(allTasks);
+
+        if (!aiSchedule) {
+            return res.status(201).json({
+                message: "Tasks created successfully, but AI did not generate a valid schedule"
+            });
+        }
+
+        // 🔹 Save AI-generated schedule in the timetable
+        await prisma.timetable.upsert({
+            where: { taskListId },
+            update: { schedule: aiSchedule },
+            create: { taskListId, schedule: aiSchedule }
         });
 
-        return res.status(201).json({ message: "Tasks created successfully", tasks: insertedTasks });
+        return res.status(201).json({
+            message: "Tasks created successfully, AI timetable generated",
+            timetable: aiSchedule
+        });
     } catch (error) {
         console.error("Database Error:", error.message);
         return res.status(500).json({ error: "Internal Server Error" });
@@ -45,9 +80,15 @@ export const CreateTasks = async (req, res) => {
 };
 
 export const GetUserTasks = async (req, res) => {
+    const { taskListId } = req.params;
+
+    if (!taskListId) {
+        return res.status(400).json({ error: "Task list ID is required" });
+    }
+
     try {
         const tasks = await prisma.tasks.findMany({
-            where: { userId: req.user.userId },
+            where: { taskListId },
             orderBy: { TaskNo: "asc" }
         });
 
@@ -59,29 +100,40 @@ export const GetUserTasks = async (req, res) => {
 };
 
 export const UpdateTask = async (req, res) => {
-    const { id } = req.params;
-    const { TaskName, Deadline, Priority, Duration } = req.body;
+    const { updates } = req.body; // Expecting an array of task updates
+
+    if (!updates || !Array.isArray(updates) || updates.length === 0) {
+        return res.status(400).json({ error: "An array of task updates is required" });
+    }
 
     try {
-        const existingTask = await prisma.tasks.findUnique({
-            where: { TaskID: id }
-        });
+        const updatedTasks = [];
 
-        if (!existingTask || existingTask.userId !== req.user.userId) {
-            return res.status(404).json({ error: "Task not found" });
+        for (const task of updates) {
+            const { TaskID, TaskName, Deadline, Priority, Duration } = task;
+
+            const existingTask = await prisma.tasks.findUnique({
+                where: { TaskID }
+            });
+
+            if (!existingTask) {
+                return res.status(404).json({ error: `Task with ID ${TaskID} not found` });
+            }
+
+            const updatedTask = await prisma.tasks.update({
+                where: { TaskID },
+                data: {
+                    TaskName: TaskName !== undefined ? TaskName : existingTask.TaskName,
+                    Deadline: Deadline !== undefined ? new Date(Deadline) : existingTask.Deadline,
+                    Priority: Priority !== undefined ? Priority : existingTask.Priority,
+                    Duration: Duration !== undefined ? Number(Duration) : existingTask.Duration
+                }
+            });
+
+            updatedTasks.push(updatedTask);
         }
 
-        const updatedTask = await prisma.tasks.update({
-            where: { TaskID: id },
-            data: {
-                TaskName: TaskName !== undefined ? TaskName : existingTask.TaskName,
-                Deadline: Deadline !== undefined ? new Date(Deadline) : existingTask.Deadline,
-                Priority: Priority !== undefined ? Priority : existingTask.Priority,
-                Duration: Duration !== undefined ? Number(Duration) : existingTask.Duration
-            }
-        });
-
-        return res.status(200).json({ message: "Task updated successfully", task: updatedTask });
+        return res.status(200).json({ message: "Tasks updated successfully", tasks: updatedTasks });
     } catch (error) {
         console.error("Database Error:", error.message);
         return res.status(500).json({ error: "Internal Server Error" });
@@ -97,7 +149,7 @@ export const DeleteTask = async (req, res) => {
             where: { TaskID: id }
         });
 
-        if (!existingTask || existingTask.userId !== req.user.userId) {
+        if (!existingTask) {
             return res.status(404).json({ error: "Task not found" });
         }
 
@@ -106,7 +158,7 @@ export const DeleteTask = async (req, res) => {
         });
 
         const remainingTasks = await prisma.tasks.findMany({
-            where: { userId: req.user.userId },
+            where: { taskListId: existingTask.taskListId },
             orderBy: { TaskNo: "asc" }
         });
 
@@ -123,7 +175,3 @@ export const DeleteTask = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
-
-
-

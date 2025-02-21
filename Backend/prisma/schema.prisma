@@ -8,25 +8,44 @@ datasource db {
 }
 
 model Users {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  phone     String   @unique
+  id        String     @id @default(cuid())
+  email     String     @unique
+  phone     String     @unique
   name      String?
   password  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  taskLists TaskList[]
+}
+
+model TaskList {
+  id        String     @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      Users      @relation(fields: [userId], references: [id])
   tasks     Tasks[]
+  Timetable Timetable?
 }
 
 model Tasks {
-  TaskID    String      @id @default(cuid())
-  TaskNo    Int    
-  userId    String
-  TaskName  String   @unique
-  Priority  String
-  Duration  Int
-  Deadline  DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users     Users    @relation(fields: [userId], references: [id])
+  TaskID     String   @id @default(cuid())
+  TaskNo     Int
+  taskListId String
+  TaskName   String
+  Priority   String
+  Duration   Int
+  Deadline   DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  taskList   TaskList @relation(fields: [taskListId], references: [id])
+}
+
+model Timetable {
+  id         String   @id @default(uuid())
+  taskListId String   @unique
+  createdAt  DateTime @default(now())
+  schedule   Json
+  taskList   TaskList @relation(fields: [taskListId], references: [id], onDelete: Cascade)
 }

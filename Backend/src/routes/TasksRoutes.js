@@ -1,11 +1,13 @@
 import { Router } from "express";
-import {CreateTasks, GetUserTasks, UpdateTask, DeleteTask} from "../controllers/Tasks.js";
+import { UpdateTask, DeleteTask } from "../controllers/Tasks.js";
 import { verifyToken } from "./authRoute.js";
+
 const router = Router();
 
-router.post("/",verifyToken, CreateTasks);
-router.get("/",verifyToken, GetUserTasks);
-router.patch("/:id",verifyToken, UpdateTask);
-router.delete("/:id",verifyToken, DeleteTask);
+// 🔹 Update an existing task
+router.patch("/:id", verifyToken, UpdateTask);
 
+// 🔹 Delete an existing task
+router.delete("/:id", verifyToken, DeleteTask);
+router.patch("/tasklists/:taskListId/tasks/:id", verifyToken, UpdateTask);
 export default router;
