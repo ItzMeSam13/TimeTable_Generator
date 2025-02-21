@@ -4,6 +4,7 @@ import tasksRouter from "./src/routes/TasksRoutes.js"
 import taskListRouter from "./src/routes/TasksListsRoutes.js";
 import cors from 'cors'
 import dotenv from 'dotenv'
+console.log("🔹 GEMINI API Key:", process.env.GEMINI_API_KEY ? "Loaded ✅" : "Not Found ❌");
 
 dotenv.config();
 

@@ -2,6 +2,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+import { generateOptimizedTimetable } from "../utils/geminiAI.js";
+
+
+
+
 export const CreateTasks = async (req, res) => {
     const { taskListId } = req.params;
     const { tasks } = req.body;
@@ -17,13 +22,13 @@ export const CreateTasks = async (req, res) => {
     }
 
     try {
-        const existingTaskCount = await prisma.tasks.count({
-            where: { taskListId }
-        });
+        // 🔹 Get existing task count to auto-increment TaskNo
+        const existingTaskCount = await prisma.tasks.count({ where: { taskListId } });
 
+        // 🔹 Save tasks with auto-incremented TaskNo
         await prisma.tasks.createMany({
             data: tasks.map((task, index) => ({
-                TaskNo: existingTaskCount + index + 1, 
+                TaskNo: existingTaskCount + index + 1,
                 TaskName: task.TaskName,
                 Deadline: new Date(task.Deadline),
                 Priority: task.Priority,
@@ -33,12 +38,29 @@ export const CreateTasks = async (req, res) => {
             skipDuplicates: true
         });
 
-        const insertedTasks = await prisma.tasks.findMany({
+        // 🔹 Fetch all tasks from the list
+        const allTasks = await prisma.tasks.findMany({ where: { taskListId } });
+
+        // 🔹 Generate AI-Optimized Schedule
+        const aiSchedule = await generateOptimizedTimetable(allTasks);
+
+        if (!aiSchedule) {
+            return res.status(201).json({
+                message: "Tasks created successfully, but AI did not generate a valid schedule"
+            });
+        }
+
+        // 🔹 Save AI-generated schedule in the timetable
+        await prisma.timetable.upsert({
             where: { taskListId },
-            orderBy: { TaskNo: "asc" }
+            update: { schedule: aiSchedule },
+            create: { taskListId, schedule: aiSchedule }
         });
 
-        return res.status(201).json({ message: "Tasks created successfully", tasks: insertedTasks });
+        return res.status(201).json({
+            message: "Tasks created successfully, AI timetable generated",
+            timetable: aiSchedule
+        });
     } catch (error) {
         console.error("Database Error:", error.message);
         return res.status(500).json({ error: "Internal Server Error" });
