@@ -15,6 +15,18 @@ export const CreateTasks = async (req, res) => {
         return res.status(400).json({ error: "Task list ID and tasks array are required" });
     }
 
+    const taskListExists = await prisma.taskList.findUnique({
+        where: { id: taskListId }
+    });
+
+    if (!taskListExists) {
+        return res.status(404).json({ error: "Task list not found" });
+    }
+
+    if (!taskListExists) {
+        return res.status(404).json({ error: "Task list not found" });
+    }
+
     for (let task of tasks) {
         if (!task.TaskName || !task.Deadline || !task.Priority || !task.Duration) {
             return res.status(400).json({ error: "All task fields are required for every task" });
