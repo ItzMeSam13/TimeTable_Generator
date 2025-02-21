@@ -18,7 +18,8 @@ export const generateOptimizedTimetable = async (tasks) => {
                 {
                     parts: [
                         {
-                            text: `Generate an optimized timetable for these tasks: ${JSON.stringify(formattedTasks)}`
+                            text: `Generate an optimized timetable for these tasks: in a proper timetable with day dates
+                            also ${JSON.stringify(formattedTasks)}`
                         }
                     ]
                 }
