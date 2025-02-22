@@ -9,5 +9,5 @@ router.patch("/update", verifyToken, UpdateTasks);
 
 // 🔹 Delete an existing task
 router.delete("/:id", verifyToken, DeleteTask);
-router.patch("/tasklists/:taskListId/tasks/:id", verifyToken, UpdateTask);
+router.patch("/tasklists/:taskListId/tasks/:id", verifyToken, UpdateTasks);
 export default router;

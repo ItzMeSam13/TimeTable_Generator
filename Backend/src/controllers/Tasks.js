@@ -4,9 +4,6 @@ const prisma = new PrismaClient();
 
 import { generateOptimizedTimetable } from "../utils/geminiAI.js";
 
-
-
-
 export const CreateTasks = async (req, res) => {
     const { taskListId } = req.params;
     const { tasks } = req.body;
@@ -15,69 +12,63 @@ export const CreateTasks = async (req, res) => {
         return res.status(400).json({ error: "Task list ID and tasks array are required" });
     }
 
-    const taskListExists = await prisma.taskList.findUnique({
-        where: { id: taskListId }
-    });
-
-    if (!taskListExists) {
-        return res.status(404).json({ error: "Task list not found" });
-    }
-
-    if (!taskListExists) {
-        return res.status(404).json({ error: "Task list not found" });
-    }
-
-    for (let task of tasks) {
-        if (!task.TaskName || !task.Deadline || !task.Priority || !task.Duration) {
-            return res.status(400).json({ error: "All task fields are required for every task" });
-        }
-    }
-
     try {
-        // 🔹 Get existing task count to auto-increment TaskNo
+        const taskListExists = await prisma.taskList.findUnique({
+            where: { id: taskListId }
+        });
+
+        if (!taskListExists) {
+            return res.status(404).json({ error: "Task list not found" });
+        }
+
+        // 🔹 Get existing task count to determine next TaskNo
         const existingTaskCount = await prisma.tasks.count({ where: { taskListId } });
 
-        // 🔹 Save tasks with auto-incremented TaskNo
-        await prisma.tasks.createMany({
-            data: tasks.map((task, index) => ({
-                TaskNo: existingTaskCount + index + 1,
-                TaskName: task.TaskName,
-                Deadline: new Date(task.Deadline),
-                Priority: task.Priority,
-                Duration: Number(task.Duration),
-                taskListId
-            })),
-            skipDuplicates: true
-        });
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i];
 
-        // 🔹 Fetch all tasks from the list
-        const allTasks = await prisma.tasks.findMany({ where: { taskListId } });
+            if (!task.TaskName || !task.Deadline || !task.Priority || !task.Duration) {
+                return res.status(400).json({ error: "All task fields are required" });
+            }
 
-        // 🔹 Generate AI-Optimized Schedule
-        const aiSchedule = await generateOptimizedTimetable(allTasks);
-
-        if (!aiSchedule) {
-            return res.status(201).json({
-                message: "Tasks created successfully, but AI did not generate a valid schedule"
+            const existingTask = await prisma.tasks.findFirst({
+                where: { taskListId, TaskName: task.TaskName }
             });
+
+            if (existingTask) {
+                // 🔹 Update existing task instead of creating a duplicate
+                await prisma.tasks.update({
+                    where: { TaskID: existingTask.TaskID },
+                    data: {
+                        Deadline: new Date(task.Deadline),
+                        Priority: task.Priority,
+                        Duration: Number(task.Duration)
+                    }
+                });
+            } else {
+                // 🔹 Create new task with auto-incremented TaskNo
+                await prisma.tasks.create({
+                    data: {
+                        TaskNo: existingTaskCount + i + 1, // Ensure TaskNo is properly assigned
+                        TaskName: task.TaskName,
+                        Deadline: new Date(task.Deadline),
+                        Priority: task.Priority,
+                        Duration: Number(task.Duration),
+                        taskListId
+                    }
+                });
+            }
         }
 
-        // 🔹 Save AI-generated schedule in the timetable
-        await prisma.timetable.upsert({
-            where: { taskListId },
-            update: { schedule: aiSchedule },
-            create: { taskListId, schedule: aiSchedule }
-        });
+        return res.status(201).json({ message: "Tasks saved successfully" });
 
-        return res.status(201).json({
-            message: "Tasks created successfully, AI timetable generated",
-            timetable: aiSchedule
-        });
     } catch (error) {
         console.error("Database Error:", error.message);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+
 
 export const GetUserTasks = async (req, res) => {
     const { taskListId } = req.params;
@@ -170,6 +161,45 @@ export const DeleteTask = async (req, res) => {
         }
 
         return res.status(200).json({ message: "Task deleted and renumbered successfully" });
+    } catch (error) {
+        console.error("Database Error:", error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+export const GenerateTimetable = async (req, res) => {
+    const { taskListId } = req.params;
+
+    if (!taskListId) {
+        return res.status(400).json({ error: "Task list ID is required" });
+    }
+
+    try {
+        const tasks = await prisma.tasks.findMany({ where: { taskListId } });
+
+        if (!tasks || tasks.length === 0) {
+            return res.status(404).json({ error: "No tasks found in this Task List" });
+        }
+
+        // Generate AI-Optimized Schedule
+        const aiSchedule = await generateOptimizedTimetable(tasks);
+
+        if (!aiSchedule) {
+            return res.status(500).json({ error: "Failed to generate AI schedule" });
+        }
+
+        // Save AI-generated schedule
+        await prisma.timetable.upsert({
+            where: { taskListId },
+            update: { schedule: aiSchedule },
+            create: { taskListId, schedule: aiSchedule }
+        });
+
+        return res.status(201).json({
+            message: "AI Timetable generated successfully",
+            timetable: aiSchedule
+        });
+
     } catch (error) {
         console.error("Database Error:", error.message);
         return res.status(500).json({ error: "Internal Server Error" });
