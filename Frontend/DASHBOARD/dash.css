@@ -43,8 +43,15 @@ body {
     border-radius: 15px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 350px;
+    width: 350px; /* Same width as .profile-box */
+    height: 245px;  /* Adjust height dynamically */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
+
 .profile-box h2, .upcoming h1 {
     margin-bottom: 20px;
     color: white;
