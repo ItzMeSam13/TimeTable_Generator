@@ -14,7 +14,11 @@ body {
     border-radius: 15px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 550px;
+    width: 900px;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .task-box {
@@ -27,6 +31,7 @@ body {
     border-radius: 5px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     width: 100%;
+    border: black 1px solid;
 }
 
 h2, h3 {
@@ -42,6 +47,25 @@ h2, h3 {
     width: 100%;
 }
 
+.task-list-input input, .task-input input, .task-input select {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    outline: none;
+   
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.task-input select {
+    color: black;
+}
+
+.task-list-input input::placeholder, .task-input input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
 input, button, select {
     padding: 8px;
     font-size: 16px;
@@ -49,7 +73,7 @@ input, button, select {
 }
 
 button {
-    background-color: #007BFF;
+    background-color: #ff9f06;
     color: white;
     border: none;
     cursor: pointer;
@@ -57,7 +81,7 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #ff9f06;
 }
 
 #taskList {
@@ -71,7 +95,7 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     padding: 8px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #fcfcfc;
 }
 
 .deleteTaskBtn {
