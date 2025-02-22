@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <ul id="taskList"></ul>
                 </div>
+                <button id="generatetimetable">Generate Timetable</button>
             `;
 
             taskListNameInput.disabled = true;
