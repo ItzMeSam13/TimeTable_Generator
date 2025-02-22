@@ -1,5 +1,8 @@
+
 import { Router } from "express";
 import { create_user, login_user } from "../controllers/Auth.js";
+import { get_user_profile } from "../controllers/Auth.js";
+
 import jwt from "jsonwebtoken";
 
 const router = Router();
@@ -20,10 +23,11 @@ export const verifyToken = (req, res, next) => {
 
 router.post("/", create_user);
 router.post("/login", login_user);
-
+router.get("/profile", verifyToken, get_user_profile);
 // Example: Protected Route
 router.get("/profile", verifyToken, (req, res) => {
     res.json({ message: "Protected route accessed", user: req.user });
 });
 
 export default router;
+

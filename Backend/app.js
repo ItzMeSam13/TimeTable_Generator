@@ -1,5 +1,5 @@
 import express from "express";
-import authRouter from "./src/routes/authRoute.js"
+import authRouter from "./src/routes/authRoutes.js"
 import tasksRouter from "./src/routes/TasksRoutes.js"
 import taskListRouter from "./src/routes/TasksListsRoutes.js";
 import cors from 'cors'

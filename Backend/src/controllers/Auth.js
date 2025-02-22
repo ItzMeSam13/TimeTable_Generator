@@ -1,7 +1,8 @@
+
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import validator from "validator";
-import jwt from "jsonwebtoken";  // ✅ Import JWT
+import jwt from "jsonwebtoken"; // ✅ Import JWT
 import dotenv from "dotenv";
 
 dotenv.config(); // ✅ Load environment variables
@@ -86,3 +87,30 @@ export async function login_user(req, res) {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+
+export async function get_user_profile(req, res) {
+    try {
+        // Extract user ID from JWT (set by middleware)
+        const userId = req.user.userId;
+
+        if (!userId) {
+            return res.status(400).json({ error: "Invalid request. User ID is required." });
+        }
+
+        // Fetch user details (excluding password)
+        const user = await prisma.users.findUnique({
+            where: { id: userId },
+            select: { id: true, email: true, phone: true, name: true, createdAt: true }
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        return res.status(200).json({ user });
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+

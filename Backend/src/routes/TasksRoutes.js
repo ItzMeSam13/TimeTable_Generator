@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UpdateTask, DeleteTask } from "../controllers/Tasks.js";
-import { verifyToken } from "./authRoute.js";
+import { verifyToken } from "./authRoutes.js";
 
 const router = Router();
 
