@@ -113,4 +113,3 @@ export async function get_user_profile(req, res) {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
-
