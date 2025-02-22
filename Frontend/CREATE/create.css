@@ -6,7 +6,6 @@ body {
     background: url('https://images.pexels.com/photos/1486974/pexels-photo-1486974.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
     background-size: cover;
 }
-
 .container {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
@@ -59,7 +58,7 @@ h2, h3 {
 }
 
 .task-input select {
-    color: black;
+    color: rgb(19, 18, 18);
 }
 
 .task-list-input input::placeholder, .task-input input::placeholder {
@@ -73,7 +72,7 @@ input, button, select {
 }
 
 button {
-    background-color: #ff9f06;
+    background-color: #ff7e06;
     color: white;
     border: none;
     cursor: pointer;
@@ -81,7 +80,7 @@ button {
 }
 
 button:hover {
-    background-color: #ff9f06;
+    background-color: #ff8706;
 }
 
 #taskList {
@@ -95,7 +94,7 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     padding: 8px;
-    border-bottom: 1px solid #fcfcfc;
+    border-bottom: 1px solid #fffcfc;
 }
 
 .deleteTaskBtn {
