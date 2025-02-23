@@ -6,6 +6,7 @@ body {
     background: url('https://images.pexels.com/photos/1486974/pexels-photo-1486974.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2') no-repeat center center/cover;
     background-size: cover;
 }
+
 .container {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
@@ -52,7 +53,6 @@ h2, h3 {
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     outline: none;
-   
     font-size: 16px;
     border-radius: 5px;
 }
@@ -107,4 +107,13 @@ button:hover {
 
 .deleteTaskBtn:hover {
     background-color: #cc0000;
+}
+
+/* Centering the "View Timetable" button */
+#viewTimetableBtn {
+    display: block;
+    margin: 20px auto;  /* Centers horizontally */
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
 }
