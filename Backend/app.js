@@ -22,7 +22,7 @@ const { client_secret, client_id, redirect_uris } = credentials.web;
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
 // 🔹 Step 1: Generate Google OAuth URL
-app.get("/auth/google", (req, res) => {
+app.get("/auth/google", (_req, res) => {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: "offline",
         scope: ["https://www.googleapis.com/auth/calendar.events"],

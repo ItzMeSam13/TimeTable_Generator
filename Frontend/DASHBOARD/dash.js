@@ -3,9 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const logoutBtn = document.getElementById("logoutBtn");
     const profileBtn = document.getElementById("profileBtn");
 
-    createTimeTableBtn.addEventListener("click", function () {
-        alert("Time Table creation feature coming soon!");
-    });
+ 
 
     logoutBtn.addEventListener("click", function () {
         const confirmLogout = confirm("Are you sure you want to log out?");
@@ -33,4 +31,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Handle case where user details are not available
         console.error('User details not found in localStorage');
     }
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const createTimeTableBtn = document.getElementById("createTimeTable");
+
+    createTimeTableBtn.addEventListener("click", function () {
+        window.location.href = "../CREATE/create.html"; // Redirects to create.html
+    });
 });
