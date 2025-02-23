@@ -2,12 +2,12 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import validator from "validator";
-import jwt from "jsonwebtoken"; // ✅ Import JWT
+import jwt from "jsonwebtoken"; 
 import dotenv from "dotenv";
 import fs from "fs";
 
 
-dotenv.config(); // ✅ Load environment variables
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -39,7 +39,6 @@ export async function create_user(req, res) {
             data: { email, phone, name, password: hashedPassword },
         });
 
-        // ✅ Generate JWT Token
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.JWT_SECRET,
@@ -53,7 +52,7 @@ export async function create_user(req, res) {
     }
 }
 
-// ✅ *Login Student*
+
 export async function login_user(req, res) {
     const { email, password } = req.body;
 
@@ -76,7 +75,6 @@ export async function login_user(req, res) {
             return res.status(401).json({ error: "Invalid credentials" });
         }
 
-        // ✅ Generate JWT Token
         const token = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.JWT_SECRET,
@@ -92,14 +90,14 @@ export async function login_user(req, res) {
 
 export async function get_user_profile(req, res) {
     try {
-        // Extract user ID from JWT (set by middleware)
+
         const userId = req.user.userId;
 
         if (!userId) {
             return res.status(400).json({ error: "Invalid request. User ID is required." });
         }
 
-        // Fetch user details (excluding password)
+
         const user = await prisma.users.findUnique({
             where: { id: userId },
             select: { id: true, email: true, phone: true, name: true, createdAt: true }

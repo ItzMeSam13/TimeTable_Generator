@@ -13,14 +13,14 @@ import { GetTimetable } from "../controllers/Timetable.js";
 
 const router = Router();
 
-// 🔹 Task List Routes
+
 router.post("/", verifyToken, CreateTaskList);
 router.patch("/:taskListId", verifyToken, EditTaskListName);
 router.get("/", verifyToken, GetUserTaskLists);
 router.delete("/:taskListId", verifyToken, DeleteTaskList);
 router.get("/:taskListId/timetable", verifyToken, GetTimetable);
 router.get("/upcoming-event",verifyToken,GetUpcomingTask)
-// 🔹 Move Task Creation Inside Task List Routes
+
 router.post("/:taskListId/tasks", verifyToken, CreateTasks);
 router.post("/:taskListId/generate-timetable", verifyToken, GenerateTimetable);
 router.get("/:taskListId/tasks", verifyToken, GetUserTasks);

@@ -33,10 +33,9 @@ body {
     overflow-y: auto;
     max-height: 80vh;
     gap: 20px;
-    flex-wrap: wrap; /* Enables responsiveness */
+    flex-wrap: wrap; 
 }
 
-/* Sidebar Sections */
 .left-section {
     display: flex;
     flex-direction: column;
@@ -44,7 +43,6 @@ body {
     gap: 20px;
 }
 
-/* Common card styles */
 .profile-box,
 .upcoming,
 .create-time-table {
@@ -75,7 +73,6 @@ body {
     padding: 50px;
 }
 
-/* Event Card */
 .event-card {
     background: #ffffff;
     border-radius: 12px;
@@ -96,7 +93,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Task List */
 .tasklist-container {
     background: #ffffff;
     padding: 15px;
@@ -140,7 +136,6 @@ body {
     padding-right: 10px;
 }
 
-/* Buttons */
 button,
 .view-btn {
     width: 100%;
@@ -159,7 +154,6 @@ button:hover,
     background: #ff9c33;
 }
 
-/* Responsive Design */
 @media screen and (max-width: 768px) {
     .container-main {
         flex-direction: column;
@@ -180,9 +174,9 @@ button:hover,
 }
 
 .view-btn {
-    width: auto; /* Ensures it only takes necessary space */
-    min-width: 80px; /* Keeps a reasonable size */
-    padding: 8px 15px; /* Adjust padding */
+    width: auto;
+    min-width: 80px;
+    padding: 8px 15px;
     text-align: center;
 }
 

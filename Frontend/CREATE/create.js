@@ -26,7 +26,6 @@ async function createTaskBox() {
 
         const taskListId = data.taskListId;
 
-        // Update UI
         taskContainer.innerHTML = `
             <div class="task-box">
                 <h3>${taskListName}</h3>
@@ -51,13 +50,13 @@ async function createTaskBox() {
             <button id="generateTimetable">Generate Timetable</button> 
         `;
 
-        // Disable input and update button
+   
         taskListNameInput.disabled = true;
         document.getElementById("addTaskListBtn").textContent = "Delete";
         document.getElementById("addTaskListBtn").removeEventListener("click", createTaskBox);
         document.getElementById("addTaskListBtn").addEventListener("click", deleteTaskBox);
 
-        // Attach event listeners
+
         document.getElementById("addTaskBtn").addEventListener("click", function () {
             addTaskToUI();
         });
@@ -75,7 +74,7 @@ async function createTaskBox() {
     }
 }
 
-// Function to add a task input to the UI
+
 function addTaskToUI() {
     const taskInputsContainer = document.getElementById("taskInputsContainer");
 
@@ -95,7 +94,7 @@ function addTaskToUI() {
     taskInputsContainer.appendChild(taskInputDiv);
 }
 
-// Save all added tasks to the API
+
 async function saveAllTasks(taskListId) {
     const taskInputs = document.querySelectorAll("#taskInputsContainer .task-input");
     if (taskInputs.length === 0) {
@@ -104,7 +103,7 @@ async function saveAllTasks(taskListId) {
     }
 
     const tasks = [];
-    let allFieldsFilled = true; // Flag to check if all fields are filled
+    let allFieldsFilled = true;
 
 
 taskInputs.forEach((inputDiv) => {
@@ -114,7 +113,7 @@ taskInputs.forEach((inputDiv) => {
     const taskPriority = inputDiv.querySelector(".taskPriority").value;
 
     if (!taskName || !taskDeadline || !taskDuration || !taskPriority) {
-        allFieldsFilled = false; // Mark as false if any field is empty
+        allFieldsFilled = false; 
     } else {
         tasks.push({
             TaskName: taskName,
@@ -125,7 +124,7 @@ taskInputs.forEach((inputDiv) => {
     }
 });
 
-// Show alert only once if any field is empty
+
 if (!allFieldsFilled) {
     alert("Please fill all fields before saving tasks.");
     return;
@@ -157,7 +156,7 @@ try {
 }
 
 }
-// Generate Timetable
+
 async function generateTimetable(taskListId) {
     const token = localStorage.getItem("token");
 
@@ -178,7 +177,7 @@ async function generateTimetable(taskListId) {
         console.log("Generated Timetable:", data);
         alert("Timetable generated successfully!");
 
-        // Create or show "View Timetable" button
+    
         let viewTimetableBtn = document.getElementById("viewTimetableBtn");
         if (!viewTimetableBtn) {
             viewTimetableBtn = document.createElement("button");
@@ -188,7 +187,6 @@ async function generateTimetable(taskListId) {
             document.getElementById("taskContainer").appendChild(viewTimetableBtn);
         }
 
-        // Redirect on button click
         viewTimetableBtn.addEventListener("click", function () {
             window.location.href = `timetable.html?taskListId=${taskListId}`;
         });
@@ -198,7 +196,6 @@ async function generateTimetable(taskListId) {
         alert("Failed to generate timetable: " + error.message);
     }
 }
-//deletetimetable
 async function deleteTaskBox() {
     const taskListNameInput = document.getElementById("taskListName");
     const taskContainer = document.getElementById("taskContainer");
@@ -232,5 +229,4 @@ async function deleteTaskBox() {
     }
 }
 
-// Attach event listener to "Create" button
 document.getElementById("addTaskListBtn").addEventListener("click", createTaskBox);

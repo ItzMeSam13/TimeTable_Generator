@@ -19,11 +19,11 @@ export const GetTimetable = async (req, res) => {
         }
 
         let scheduleText = taskList.Timetable.schedule;
-        let timetableId = taskList.Timetable.id; // 🔹 Get TimeTableId
+        let timetableId = taskList.Timetable.id;
 
         console.log("📌 Debug - Raw Timetable.schedule:", scheduleText);
 
-        // 🔹 Parse scheduleText if it is a stringified JSON object
+  
         try {
             if (typeof scheduleText === "string") {
                 scheduleText = JSON.parse(scheduleText);
@@ -35,11 +35,10 @@ export const GetTimetable = async (req, res) => {
             return res.status(400).json({ error: "Timetable data is not in valid JSON format." });
         }
 
-        // 🔹 Format the timetable with AM/PM times and extract only the date
         const formattedSchedule = convertTimetableTo12HourFormat(scheduleText.timetable);
 
         return res.status(200).json({
-            TimeTableId: timetableId, // 🔹 Include TimeTableId in response
+            TimeTableId: timetableId, 
             timetable: formattedSchedule
         });
     } catch (error) {
@@ -49,7 +48,7 @@ export const GetTimetable = async (req, res) => {
 };
 
 
-// 🔹 Convert Time Format for Each Task Entry
+
 function convertTimetableTo12HourFormat(timetableArray) {
     if (!Array.isArray(timetableArray)) {
         console.error("❌ Invalid timetable format:", timetableArray);
@@ -58,20 +57,20 @@ function convertTimetableTo12HourFormat(timetableArray) {
 
     return timetableArray.map(task => ({
         TaskName: task.TaskName,
-        StartTime: task.StartTime,  // Keep original ISO format
-        EndTime: task.EndTime,      // Keep original ISO format
+        StartTime: task.StartTime,  
+        EndTime: task.EndTime,      
         Duration: task.Duration,
-        Date: extractDate(task.Date),  // Convert Date to "YYYY-MM-DD"
+        Date: extractDate(task.Date), 
         Priority: task.Priority
     }));
 }
 
-// 🔹 Extracts Only "YYYY-MM-DD" from an ISO Date
+
 function extractDate(isoDate) {
     if (!isoDate) return null;
     
     const dateObj = new Date(isoDate);
-    if (isNaN(dateObj.getTime())) return isoDate; // Return original if invalid
+    if (isNaN(dateObj.getTime())) return isoDate;
 
-    return dateObj.toISOString().split("T")[0]; // Extracts "YYYY-MM-DD"
+    return dateObj.toISOString().split("T")[0]; 
 }

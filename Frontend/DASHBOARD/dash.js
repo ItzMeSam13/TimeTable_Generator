@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		const confirmLogout = confirm("Are you sure you want to log out?");
 		if (confirmLogout) {
 			alert("Logging out...");
-			localStorage.removeItem("token"); // Clear token on logout
+			localStorage.removeItem("token"); 
 			localStorage.removeItem("user"); 
 			window.location.href = "../LOGIN/Login.html";
 		}
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		window.location.href = "../PROFILE/profile.html";
 	});
 
-	// Retrieve token from localStorage
+
 	const token = localStorage.getItem("token");
 	if (!token) {
 		alert("Session expired. Please log in again.");
@@ -29,15 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	console.log("User Token:", token);
 
-	// Decode token and check expiration
 	try {
-		const tokenPayload = JSON.parse(atob(token.split(".")[1])); // Decode JWT
-		const tokenExpiry = tokenPayload.exp * 1000; // Convert to milliseconds
+		const tokenPayload = JSON.parse(atob(token.split(".")[1])); 
+		const tokenExpiry = tokenPayload.exp * 1000; 
 		const currentTime = Date.now();
 
 		if (currentTime >= tokenExpiry) {
 			alert("Session expired. Please log in again.");
-			localStorage.removeItem("token"); // Remove expired token
+			localStorage.removeItem("token"); 
 			localStorage.removeItem("user");
 			window.location.href = "../LOGIN/Login.html";
 		}
@@ -73,8 +72,8 @@ upcomingevent.addEventListener("click", async () => {
     }
 
     try {
-        // 🔹 Fetch Google OAuth Token from Backend
-        const googleTokenResponse = await fetch("http://localhost:8001/auth/google-token", {
+
+        const response = await fetch("http://localhost:8001/tasklists/upcoming-event", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -82,52 +81,36 @@ upcomingevent.addEventListener("click", async () => {
             }
         });
 
-        if (!googleTokenResponse.ok) throw new Error("Failed to fetch Google token");
+        const data = await response.json();
 
-        const googleData = await googleTokenResponse.json();
-        const googleToken = googleData.token;
-
-        if (!googleToken) {
-            alert("Google session expired. Please log in again.");
-            window.location.href = "http://localhost:8001/auth/google";
+        if (response.status === 404) {
+            upcomingBox.innerHTML = `<h2>${data.error}</h2>`;
             return;
         }
 
-        // 🔹 Fetch upcoming event using the Google token
-        const response = await fetch("http://localhost:8001/tasklists/upcoming-event", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,  
-                "Google-Authorization": `Bearer ${googleToken}` 
-            }
-        });
-
-        const text = await response.text(); 
-
-        try {
-            const data = JSON.parse(text); 
-            if (!data.task) throw new Error("No task data found");
-        
-            upcomingBox.innerHTML = `
-                <div class="event-card">
-                    <h2>📅 Upcoming Event</h2>
-                    <div class="event-details">
-                        <p><strong>📌 Task:</strong> ${data.task.title}</p>
-                        <p><strong>⏰ Start:</strong> ${new Date(data.task.startTime).toLocaleString()}</p>
-                        <p><strong>⏳ End:</strong> ${new Date(data.task.endTime).toLocaleString()}</p>
-                        <p><strong>📝 Description:</strong> ${data.task.description}</p>
-                    </div>
-                </div>
-            `;
-        } catch (jsonError) {
-            throw new Error("Invalid JSON response from server. Response was: " + text);
+        if (!response.ok) {
+            throw new Error(data.error || "Failed to fetch upcoming tasks");
         }
-        
+
+
+        upcomingBox.innerHTML = `
+            <div class="event-card">
+                <h2>📅 Nearest Upcoming Task</h2>
+                <div class="event-details">
+                    <p><strong>📌 Task:</strong> ${data.task.title}</p>
+                    <p><strong>⏰ Start:</strong> ${new Date(data.task.startTime).toLocaleString()}</p>
+                    <p><strong>⏳ End:</strong> ${new Date(data.task.endTime).toLocaleString()}</p>
+                    <p><strong>📝 Description:</strong> ${data.task.description}</p>
+                </div>
+            </div>
+        `;
+
     } catch (error) {
         upcomingBox.innerHTML = `<h1>Error</h1><p>${error.message}</p>`;
     }
 });
+
+
 
 async function fetchUserTaskLists() {
     const createTimeTableSection = document.querySelector(".create-time-table");
@@ -174,10 +157,10 @@ async function fetchUserTaskLists() {
             </ul>
         `;
 
-        // Add event listener to each "View" button
+
             document.querySelectorAll(".view-btn").forEach(button => {
                 button.addEventListener("click", (event) => {
-                    // Get the taskListId dynamically from the button's data attribute
+              
                     const taskListId = event.target.getAttribute("data-tasklist-id");
             
                     if (!taskListId) {
@@ -185,7 +168,7 @@ async function fetchUserTaskLists() {
                         return;
                     }
             
-                    // Redirect to the timetable page with the correct taskListId
+           
                     window.location.href = `${window.location.origin}/Frontend/CREATE/timetable.html?taskListId=${taskListId}`;
                 });
             });
@@ -196,5 +179,5 @@ async function fetchUserTaskLists() {
     }
 }
 
-// Invoke function when dashboard loads
+
 document.addEventListener("DOMContentLoaded", fetchUserTaskLists);

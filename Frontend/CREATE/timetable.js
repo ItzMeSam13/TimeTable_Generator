@@ -38,7 +38,7 @@ function formatTime(isoString) {
 
 function displayTimetable(timetable) {
     const tableBody = document.querySelector("#timetable tbody");
-    tableBody.innerHTML = ""; // Clear previous data
+    tableBody.innerHTML = ""; 
 
     timetable.forEach(task => {
         const row = document.createElement("tr");

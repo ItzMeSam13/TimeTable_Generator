@@ -21,7 +21,6 @@ export const CreateTasks = async (req, res) => {
             return res.status(404).json({ error: "Task list not found" });
         }
 
-        // 🔹 Get existing task count to determine next TaskNo
         const existingTaskCount = await prisma.tasks.count({ where: { taskListId } });
 
         for (let i = 0; i < tasks.length; i++) {
@@ -36,7 +35,7 @@ export const CreateTasks = async (req, res) => {
             });
 
             if (existingTask) {
-                // 🔹 Update existing task instead of creating a duplicate
+
                 await prisma.tasks.update({
                     where: { TaskID: existingTask.TaskID },
                     data: {
@@ -46,10 +45,10 @@ export const CreateTasks = async (req, res) => {
                     }
                 });
             } else {
-                // 🔹 Create new task with auto-incremented TaskNo
+
                 await prisma.tasks.create({
                     data: {
-                        TaskNo: existingTaskCount + i + 1, // Ensure TaskNo is properly assigned
+                        TaskNo: existingTaskCount + i + 1,
                         TaskName: task.TaskName,
                         Deadline: new Date(task.Deadline),
                         Priority: task.Priority,
@@ -91,7 +90,7 @@ export const GetUserTasks = async (req, res) => {
 };
 
 export const UpdateTasks = async (req, res) => {
-    const { updates } = req.body; // Expecting an array of task updates
+    const { updates } = req.body; 
 
     if (!updates || !Array.isArray(updates) || updates.length === 0) {
         return res.status(400).json({ error: "An array of task updates is required" });
@@ -181,14 +180,12 @@ export const GenerateTimetable = async (req, res) => {
             return res.status(404).json({ error: "No tasks found in this Task List" });
         }
 
-        // Generate AI-Optimized Schedule
         const aiSchedule = await generateOptimizedTimetable(tasks);
 
         if (!aiSchedule) {
             return res.status(500).json({ error: "Failed to generate AI schedule" });
         }
 
-        // Save AI-generated schedule
         await prisma.timetable.upsert({
             where: { taskListId },
             update: { schedule: aiSchedule },

@@ -16,12 +16,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 🔹 Load Google OAuth credentials
 const credentials = JSON.parse(fs.readFileSync("credentials.json"));
 const { client_secret, client_id, redirect_uris } = credentials.web;
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
-// 🔹 Step 1: Generate Google OAuth URL
 app.get("/auth/google", (_req, res) => {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: "offline",
@@ -30,7 +28,7 @@ app.get("/auth/google", (_req, res) => {
     res.redirect(authUrl);
 });
 
-// 🔹 Step 2: Handle OAuth Callback & Save Token
+
 app.get("/auth/google/callback", async (req, res) => {
     const { code } = req.query;
     try {

@@ -68,11 +68,11 @@ if (!loginForm) {
             if (response.ok) {
                 console.log("Login successful:", result);
 
-                // Save token & user data in localStorage
+        
                 localStorage.setItem("token", result.token);
                 localStorage.setItem("user", JSON.stringify(result.user));
 
-                // Remember email if checkbox is checked
+           
                 if (document.getElementById("rememberMe")?.checked) {
                     localStorage.setItem("rememberedEmail", email);
                 } else {
@@ -80,7 +80,7 @@ if (!loginForm) {
                 }
 
                 alert("Login Successful!");
-                window.location.href = "../DASHBOARD/dash.html"; // Redirect to dashboard
+                window.location.href = "../DASHBOARD/dash.html"; 
             } else {
                 console.error("Login failed:", result.message);
                 alert(result.message || "Login failed! Please check your credentials.");
@@ -94,7 +94,7 @@ if (!loginForm) {
     console.log("Login form event listener attached.");
 }
 
-// Restore remembered email on page load
+
 window.onload = function () {
     const rememberedEmail = localStorage.getItem("rememberedEmail");
     if (rememberedEmail) {
