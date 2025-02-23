@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import validator from "validator";
 import jwt from "jsonwebtoken"; // ✅ Import JWT
 import dotenv from "dotenv";
+import fs from "fs";
+
 
 dotenv.config(); // ✅ Load environment variables
 
@@ -113,3 +115,15 @@ export async function get_user_profile(req, res) {
         return res.status(500).json({ error: "Internal server error" });
     }
 }
+
+export const GetGoogleToken = async (req, res) => {
+    try {
+        const tokens = JSON.parse(fs.readFileSync("tokens.json"));
+        if (!tokens || !tokens.access_token) {
+            return res.status(401).json({ error: "Google authentication required." });
+        }
+        return res.status(200).json({ token: tokens.access_token });
+    } catch (error) {
+        return res.status(500).json({ error: "Failed to retrieve Google token." });
+    }
+};

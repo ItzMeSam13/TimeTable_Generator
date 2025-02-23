@@ -24,6 +24,7 @@ export const generateOptimizedTimetable = async (tasks) => {
 - **Tasks must start and end before the deadline**.
 - **Higher priority tasks** should be scheduled **earlier**.
 - Avoid overlapping tasks.
+-make sure to have breaks of 30 minutes if more than one task is present on same date.
 - Use the following format:
 
 The output **must** strictly follow this format:

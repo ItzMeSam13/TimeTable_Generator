@@ -2,10 +2,12 @@
 import { Router } from "express";
 import { create_user, login_user } from "../controllers/Auth.js";
 import { get_user_profile } from "../controllers/Auth.js";
-
+import { GetGoogleToken } from "../controllers/Auth.js";
 import jwt from "jsonwebtoken";
 
 const router = Router();
+
+
 
 // Middleware to verify JWT
 export const verifyToken = (req, res, next) => {
@@ -24,6 +26,7 @@ export const verifyToken = (req, res, next) => {
 router.post("/", create_user);
 router.post("/login", login_user);
 router.get("/profile", verifyToken, get_user_profile);
+router.get("/google-token", verifyToken, GetGoogleToken);
 // Example: Protected Route
 router.get("/profile", verifyToken, (req, res) => {
     res.json({ message: "Protected route accessed", user: req.user });
