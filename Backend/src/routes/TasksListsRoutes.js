@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-	CreateTaskList,
-	GetUserTaskLists,
-	DeleteTaskList,
-	EditTaskListName,
-	SyncTimetableToGoogleCalendar,
+CreateTaskList,
+GetUserTaskLists,
+DeleteTaskList,
+EditTaskListName,
+SyncTimetableToGoogleCalendar,
 } from "../controllers/TasksList.js";
 import { CreateTasks, GetUserTasks, GenerateTimetable } from "../controllers/Tasks.js";
 import { verifyToken } from "./authRoute.js";
@@ -21,11 +21,11 @@ router.get("/:taskListId/timetable", verifyToken, GetTimetable);
 
 // 🔹 Move Task Creation Inside Task List Routes
 router.post("/:taskListId/tasks", verifyToken, CreateTasks);
-router.post("/:taskListId/generate-timetable", verifyToken, GenerateTimetable); 
+router.post("/:taskListId/generate-timetable", verifyToken, GenerateTimetable);
 router.get("/:taskListId/tasks", verifyToken, GetUserTasks);
 router.post(
-	"/timetable/:timetableId/sync",
-	verifyToken,
-	SyncTimetableToGoogleCalendar
+"/timetable/:timetableId/sync",
+verifyToken,
+SyncTimetableToGoogleCalendar
 );
 export default router;
