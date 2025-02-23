@@ -1,21 +1,37 @@
-document.getElementById("profileForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+document.addEventListener("DOMContentLoaded", async function () {
+    const profileForm = document.getElementById("profileForm");
 
-    // Get values from inputs
-    let name = document.getElementById("name").value;
-    let email = document.getElementById("email").value;
-    let mobile = document.getElementById("mobile").value;
-    let password = document.getElementById("password").value;
+    try {
+        // Fetch user profile from backend
+        const response = await fetch("http://localhost:8001/auth/profile", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is stored in localStorage after login
+            },
+        });
 
-    // Check if inputs are filled
-    if (name && email && mobile && password) {
-        document.getElementById("outputName").textContent = name;
-        document.getElementById("outputEmail").textContent = email;
-        document.getElementById("outputMobile").textContent = mobile;
-        document.getElementById("outputPassword").textContent = "*".repeat(password.length); // Mask password
+        if (!response.ok) {
+            throw new Error("Failed to fetch profile");
+        }
 
-        document.getElementById("profileOutput").classList.remove("hidden");
-    } else {
-        alert("Please fill in all fields.");
+        const data = await response.json();
+        const user = data.user;
+
+        if (user) {
+            document.getElementById("name").textContent = user.name;
+            document.getElementById("email").textContent = user.email;
+            document.getElementById("mobile").textContent = user.phone;
+            document.getElementById("createdAt").textContent = new Date(user.createdAt).toLocaleString();
+        }
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        alert("Error loading profile. Please try again.");
     }
+
+    // Edit profile button (optional functionality)
+    profileForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        alert("Edit profile functionality will be implemented here.");
+    });
 });

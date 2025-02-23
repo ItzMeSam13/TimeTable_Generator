@@ -1,7 +1,8 @@
+
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import validator from "validator";
-import jwt from "jsonwebtoken";  // ✅ Import JWT
+import jwt from "jsonwebtoken"; // ✅ Import JWT
 import dotenv from "dotenv";
 
 dotenv.config(); // ✅ Load environment variables

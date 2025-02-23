@@ -14,16 +14,19 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="#"><h1>TIME TABLE GENERATOR</h1></a>
             <div class="ms-auto">
-                <a href="../LOGIN/Login.html" class="btn btn-danger"><ion-icon name="log-out"></ion-icon> Log Out</a>
+                <a href="../LOGIN/Login.html" id="logoutBtn" class="btn btn-danger">
+                    <ion-icon name="log-out"></ion-icon> Log Out
+                </a>
             </div>
         </div>
     </nav>
+    
     <section class="container-main">
         <section class="left-section">
             <section class="profile-box">
                 <h2>Profile</h2>
                 <p>User details...</p>
-                <button>View Profile</button>
+                <button id="profileBtn">View Profile</button>
             </section>
     
             <section class="upcoming">
@@ -35,7 +38,7 @@
     
         <section class="create-time-table">
             <h2>Create Time Table</h2>
-            <button>Create</button>
+            <button id="createTimeTable">Create</button>
         </section>
     </section>
     

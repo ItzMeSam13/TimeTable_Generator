@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     profileBtn.addEventListener("click", function () {
         alert("Redirecting to Profile...");
-        window.location.href = "profile.html"; 
+        window.location.href = "../PROFILE/profile.html"; 
     });
 
     // Retrieve user details from localStorage

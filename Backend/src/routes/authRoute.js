@@ -1,3 +1,4 @@
+
 import { Router } from "express";
 import { create_user, login_user } from "../controllers/Auth.js";
 import { get_user_profile } from "../controllers/Auth.js";
@@ -29,3 +30,4 @@ router.get("/profile", verifyToken, (req, res) => {
 });
 
 export default router;
+
