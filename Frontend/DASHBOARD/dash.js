@@ -175,10 +175,20 @@ async function fetchUserTaskLists() {
         `;
 
         document.querySelectorAll(".view-btn").forEach(button => {
-            button.addEventListener("click", () => {
-                alert("View feature is not available yet.");
+            button.addEventListener("click", (event) => {
+                // Get the taskListId dynamically from the button's data attribute
+                const taskListId = event.target.getAttribute("data-tasklist-id");
+        
+                if (!taskListId) {
+                    alert("Task List ID not found!");
+                    return;
+                }
+        
+                // Redirect to the timetable page with the correct taskListId
+                window.location.href = `${window.location.origin}/Frontend/CREATE/timetable.html?taskListId=${taskListId}=${taskListId}`;
             });
         });
+        
 
     } catch (error) {
         taskListContainer.innerHTML = `<h1>Error</h1><p>${error.message}</p>`;
