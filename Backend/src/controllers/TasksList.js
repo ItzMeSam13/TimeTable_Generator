@@ -136,11 +136,6 @@ async function deleteGoogleCalendarEvents(taskListId) {
 }
 
 
-
-
-
-
-
 // 🔹 Load saved OAuth tokens
 const tokens = JSON.parse(fs.readFileSync("tokens.json"));
 const oAuth2Client = new google.auth.OAuth2();
